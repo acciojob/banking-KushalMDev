@@ -1,11 +1,14 @@
 package com.driver;
 
+import java.util.ArrayList;
+
 import javax.naming.InsufficientResourcesException;
 
 public class BankAccount {
 
     private String name;
     private double balance;
+
     public String getName() {
         return name;
     }
@@ -26,7 +29,7 @@ public class BankAccount {
         AccountNumber = accountNumber;
     }
 
-    public  double getBalance() {
+    public double getBalance() {
         return balance;
     }
 
@@ -39,7 +42,7 @@ public class BankAccount {
     }
 
     private double minBalance;
-    private String AccountNumber = "";
+    String AccountNumber = "";
 
     public BankAccount(String name, double balance, double minBalance) {
         this.name = name;
@@ -58,40 +61,93 @@ public class BankAccount {
         if (digits > 0 && 9 * digits < sum) {
             throw new AccountNumberException("Account Number can not be generated");
         } else {
-            String result = "";
-            helper(digits, sum, result, 0, 0);
+            findNDigitNums(digits,sum);
+            if(result.size()>0){
+                AccountNumber=result.get(0);
+            }
             return AccountNumber;
         }
         // return null;
     }
+    ArrayList<String> result=new ArrayList<>();
 
-    public void helper(int digits, int sum, String result, int curSum, int cnt) {
-        if (cnt == digits) {
-            if (curSum == sum) {
-                AccountNumber = result;
-            }
-            return;
-        }
-        if (curSum == sum) {
-            if (cnt == digits) {
-                AccountNumber = result;
-            }
-            return;
-        }
-        if (cnt > digits || curSum > sum) {
-            return;
-        }
-        for (int i = 0; i <= 9; i++) {
-            int remaining = digits - cnt - 1;
+    public void findNDigitNumsUtil(int n, int sum, char out[],
+    int index)
+{
+// Base case
+if (index > n || sum < 0)
+return;
 
-            int product = remaining * 9;
-            int remainder = sum - curSum - product;
-            if (i < remainder) {
-                continue;
-            }
-            helper(digits, sum, result + i, curSum + i, cnt + 1);
-        }
+// If number becomes N-digit
+if (index == n)
+{
+// if sum of its digits is equal to given sum,
+// print it
+if(sum == 0)
+{
+out[index] = '\0'   ;
+String temp="";
+for(char c:out){
+temp+=c;
+}
+result.add(temp);
+}
+return;
+}
+
+// Traverse through every digit. Note that
+// here we're considering leading 0's as digits
+for (int i = 0; i <= 9; i++)
+{
+// append current digit to number
+out[index] = (char)(i + '0');
+
+// recurse for next digit with reduced sum
+findNDigitNumsUtil(n, sum - i, out, index + 1);
+}
+}
+public void findNDigitNums(int n, int sum)
+{
+    // output array to store N-digit numbers
+    char[] out = new char[n + 1];
+
+    // fill 1st position by every digit from 1 to 9 and
+    // calls findNDigitNumsUtil() for remaining positions
+    for (int i = 1; i <= 9; i++)
+    {
+        out[0] = (char)(i + '0');
+        findNDigitNumsUtil(n, sum - i, out, 1);
     }
+}
+ 
+
+    // public void helper(int digits, int sum, String result, int curSum, int cnt) {
+    // if (cnt == digits) {
+    // if (curSum == sum) {
+    // AccountNumber = result;
+    // }
+    // return;
+    // }
+    // if (curSum == sum) {
+    // if (cnt == digits) {
+    // AccountNumber = result;
+    // }
+    // return;
+    // }
+    // if (cnt > digits || curSum > sum) {
+    // return;
+    // }
+    // for (int i = 0; i <= 9; i++) {
+    // int remaining = digits - cnt - 1;
+
+    // int product = remaining * 9;
+    // int remainder = sum - curSum - product;
+    // if (i < remainder) {
+    // continue;
+    // }
+    // helper(digits, sum, result + i, curSum + i, cnt + 1);
+    // }
+    // }
 
     public void deposit(double amount) {
         // add amount to balance
