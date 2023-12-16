@@ -65,6 +65,7 @@ public class CurrentAccount extends BankAccount {
 
     public boolean isValid(String s) {
         if (s.length() == 0)
+        
             return true;
         char prev = s.charAt(0);
         for (int i = 1; i < s.length(); i++) {
